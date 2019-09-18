@@ -16,7 +16,7 @@ public class Controller {
     @GetMapping(value="", produces="application/json")
     public List<Employee> getEmployees() {
         List<Employee> result = new ArrayList<Employee>();
-        result.add(new Employee());
+        result.add(new Employee("123"));
         return result;
     }
 }
