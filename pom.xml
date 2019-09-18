@@ -6,7 +6,7 @@
 	<groupId>com.cdyweb</groupId>
 	<artifactId>employees-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>employees-api</name>
 	<description>employees-api</description>
@@ -57,7 +57,13 @@
 					<artifactId>jetty-util</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>	
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-gcp-starter</artifactId>
+			<version>1.0.0.RELEASE</version>
+		</dependency>
 	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -185,37 +191,6 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>get-the-git-infos</id>
-						<goals>
-							<goal>revision</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-					<prefix>git</prefix>
-					<verbose>false</verbose>
-					<generateGitPropertiesFile>true</generateGitPropertiesFile>
-					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
-					<format>properties</format>
-					<gitDescribe>
-						<skip>false</skip>
-						<always>false</always>
-						<dirty>-dirty</dirty>
-					</gitDescribe>
-					<!--  
-					<includeOnlyProperties>
-                      	<includeOnlyProperty>^git.commit.id.*$</includeOnlyProperty>
-                      	<includeOnlyProperty>^git.commit.time.*$</includeOnlyProperty>
-                    </includeOnlyProperties>
-                    -->
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
@@ -233,57 +208,27 @@
     			</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.2</version>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>appengine-maven-plugin</artifactId>
+				<version>2.0.0</version>
 				<configuration>
-					<excludes>
-						<!-- Exclude full package from test coverage -->
-						<exclude>**/ca/empire/adjudication/web/webservices/**</exclude>
-					</excludes>
+					<projectId>cdyweb-employees</projectId>
+					<serviceAccountKeyFile>${GOOGLE_APPLICATION_CREDENTIALS}</serviceAccountKeyFile>
+					<devserver.host>0.0.0.0</devserver.host>
+					<devserver.port>8080</devserver.port>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
-						</configuration>
-					</execution>
-					<execution>
-						<id>jacoco-prepare-it</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>prepare-agent-integration</goal>
-						</goals>
-						<configuration>
-							<propertyName>jacoco.agent</propertyName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>post-unit-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<dataFile>${project.build.directory}/coverage-reports/jacoco.exec</dataFile>
-							<outputDirectory>${project.build.directory}/coverage-reports/jacoco</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.2.3</version><!--$NO-MVN-MAN-VER$-->
+				<configuration>
+					<packagingExcludes>WEB-INF/lib/tomcat-*.jar</packagingExcludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 	<repositories>
-	<!-- 
-		<repository>
-			<id>empire-common</id>
-			<name>Empire common</name>
-			<url>https://raw.githubusercontent.com/EmpireLife/group-api-common-lib/repository</url>
-		</repository>
-	 -->
 		<repository>
 			<id>spring-releases</id>
 			<name>Spring Releases</name>
@@ -318,42 +263,6 @@
 				<property>
 					<name>env.SPRING_PROFILES_ACTIVE</name>
 					<value>default</value>
-				</property>
-			</activation>
-		</profile>
-		<profile>
-			<id>prod</id>
-			<properties>
-				<activatedProperties>prod</activatedProperties>
-			</properties>
-			<activation>
-				<property>
-					<name>env.SPRING_PROFILES_ACTIVE</name>
-					<value>prod</value>
-				</property>
-			</activation>
-		</profile>
-		<profile>
-			<id>dev</id>
-			<properties>
-				<activatedProperties>dev</activatedProperties>
-			</properties>
-			<activation>
-				<property>
-					<name>env.SPRING_PROFILES_ACTIVE</name>
-					<value>dev</value>
-				</property>
-			</activation>
-		</profile>
-		<profile>
-			<id>standalone</id>
-			<properties>
-				<activatedProperties>standalone</activatedProperties>
-			</properties>
-			<activation>
-				<property>
-					<name>env.SPRING_PROFILES_ACTIVE</name>
-					<value>standalone</value>
 				</property>
 			</activation>
 		</profile>

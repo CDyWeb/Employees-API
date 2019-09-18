@@ -1,0 +1,52 @@
+{
+	"info": {
+		"_postman_id": "8c6541ab-f1cf-43b8-9d44-f2a6bc175010",
+		"name": "Employee API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get employees",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "18f4b866-6fac-4af9-b692-7d92081423bc",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Data Validation\", function () {",
+							"",
+							"",
+							"    pm.expect(jsonData).not.to.eql(null);",
+							"",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v1/employees",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v1",
+						"employees"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
