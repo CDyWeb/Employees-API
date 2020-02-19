@@ -47,4 +47,8 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('pom.xml') }}
 
     - name: Deploy with Maven
-      run: mvn package appengine:deploy -DskipTests=true
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: key.json
+      run: |
+        echo "${{ secrets.GCP_AUTH }}" | base64 -d > key.json
+        mvn package appengine:deploy -DskipTests=true -Dapp.deploy.version=GCLOUD_CONFIG
